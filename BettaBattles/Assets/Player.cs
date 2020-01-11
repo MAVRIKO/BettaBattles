@@ -8,8 +8,13 @@ public class Player : MonoBehaviour
     PlayerControls controls;
 
     public float mSpeed = 1f;
-    float cSpeed = 1f;
     public float dSpeed = 2f;
+    float cSpeed = 1f;
+
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+
 
     Vector2 movement;
     private void Awake()
@@ -21,6 +26,8 @@ public class Player : MonoBehaviour
 
         controls.Player.Dash.performed += ctx => Dash(dSpeed);
         controls.Player.Dash.canceled += ctx => Dash(mSpeed);
+
+        controls.Player.Attack.performed += ctx => Attack();
 
     }
     // Start is called before the first frame update
@@ -34,6 +41,17 @@ public class Player : MonoBehaviour
     {
         Move();
     }
+    void Attack()
+    {
+        Debug.Log("attacked!");
+
+        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
+
+        foreach(Collider enemy in hitEnemies)
+        {
+            Debug.Log("Hit " + enemy.name);
+        }
+    }
     void Dash(float speed)
     {
         cSpeed = speed;
@@ -42,6 +60,12 @@ public class Player : MonoBehaviour
     {
         Vector2 m = new Vector2(movement.x, movement.y) * Time.deltaTime * cSpeed;
         transform.Translate(m, Space.World);
+    }
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
     private void OnEnable()
     {
