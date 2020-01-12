@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        // input setup
         controls = new PlayerControls();
 
         controls.Player.Move.performed += ctx => movement = ctx.ReadValue<Vector2>();
@@ -45,31 +46,52 @@ public class Player : MonoBehaviour
     }
     void Attack()
     {
+        // faces attackpoint in direction of input
         attackPoint = new Vector2(transform.position.x, transform.position.y) + movement * attackDistance;
         Debug.Log("attacked!");
 
+        //grabs colliders of hit ditected enemies and their fins
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint, attackRange, enemies);
         Collider2D[] hitFins = Physics2D.OverlapCircleAll(attackPoint, attackRange, eFins);
 
+        //deals stress damage to enemies
         foreach(Collider2D enemy in hitEnemies)
         {
+            if (enemy.GetComponent<Stress>() == null)
+            {
+                Debug.Log("No Stress Component in " + enemy.name);
+            }
             enemy.GetComponent<Stress>().stress = enemy.GetComponent<Stress>().stress - 12.5f;
             Debug.Log("Enemy stress " + enemy.GetComponent<Stress>().stress);
         }
 
+        //deals damage to fins of enemies
         foreach(Collider2D fins in hitFins)
         {
+            if (fins.GetComponentInParent<Stress>() == null)
+            {
+                Debug.Log("No Stress Component in parent of " + fins.name);
+            }
             fins.GetComponentInParent<Stress>().finHealth = fins.GetComponentInParent<Stress>().finHealth - 25f;
             Debug.Log("Enemy fin health " + fins.GetComponentInParent<Stress>().finHealth);
         }
     }
+
+    //sets current speed depending on if dash button is held or not
     void Dash(float speed)
     {
         cSpeed = speed;
     }
+
+    //controls movement direction and speed
     void Move()
     {
-        Vector2 m = new Vector2(movement.x, movement.y) * Time.deltaTime * cSpeed;
+        if(gameObject.GetComponent<Stress>() == null)
+        {
+            Debug.Log("No Stress Component");
+            return;
+        }
+        Vector2 m = new Vector2(movement.x, movement.y) * Time.deltaTime * cSpeed * gameObject.GetComponent<Stress>().fSMultiplier;
         transform.Translate(m, Space.World);
     }
     private void OnDrawGizmosSelected()
