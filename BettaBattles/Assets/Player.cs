@@ -10,13 +10,15 @@ public class Player : MonoBehaviour
     public float mSpeed = 1f;
     public float dSpeed = 2f;
     float cSpeed = 1f;
-
-    public Transform attackPoint;
-    public float attackRange = 0.5f;
-    public LayerMask enemyLayers;
-
-
     Vector2 movement;
+
+    public float attackRange = 0.5f;
+    public float attackDistance = 0.5f;
+    public LayerMask enemies;
+    public LayerMask eFins;
+    public Vector2 attackPoint;
+
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -43,13 +45,22 @@ public class Player : MonoBehaviour
     }
     void Attack()
     {
+        attackPoint = new Vector2(transform.position.x, transform.position.y) + movement * attackDistance;
         Debug.Log("attacked!");
 
-        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint, attackRange, enemies);
+        Collider2D[] hitFins = Physics2D.OverlapCircleAll(attackPoint, attackRange, eFins);
 
-        foreach(Collider enemy in hitEnemies)
+        foreach(Collider2D enemy in hitEnemies)
         {
-            Debug.Log("Hit " + enemy.name);
+            enemy.GetComponent<Stress>().stress = enemy.GetComponent<Stress>().stress - 12.5f;
+            Debug.Log("Enemy stress " + enemy.GetComponent<Stress>().stress);
+        }
+
+        foreach(Collider2D fins in hitFins)
+        {
+            fins.GetComponentInParent<Stress>().finHealth = fins.GetComponentInParent<Stress>().finHealth - 25f;
+            Debug.Log("Enemy fin health " + fins.GetComponentInParent<Stress>().finHealth);
         }
     }
     void Dash(float speed)
@@ -65,7 +76,7 @@ public class Player : MonoBehaviour
     {
         if (attackPoint == null)
             return;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(attackPoint, attackRange);
     }
     private void OnEnable()
     {
