@@ -19,6 +19,7 @@ public class Stress : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //fix this somehow. ie interp
         if (finHealth >= 100f)
         {
             fSMultiplier = 1f;
