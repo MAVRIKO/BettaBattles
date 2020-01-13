@@ -14,9 +14,12 @@ public class Player : MonoBehaviour
 
     public float attackRange = 0.5f;
     public float attackDistance = 0.5f;
+    public float attackPointResponciveness = 1f;
     public LayerMask enemies;
     public LayerMask eFins;
-    public Vector2 attackPoint;
+    Vector2 previouseAP;
+    Vector2 attackPoint;
+    Vector2 previousInput;
 
 
     private void Awake()
@@ -42,12 +45,15 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // faces attackpoint in direction of input
+        previouseAP = new Vector2(Mathf.Lerp(previousInput.x, movement.x, attackPointResponciveness), Mathf.Lerp(previousInput.y, movement.y, attackPointResponciveness));
+        attackPoint = new Vector2(transform.position.x, transform.position.y) + previouseAP * attackDistance;
+        previousInput = previouseAP;
+
         Move();
     }
     void Attack()
     {
-        // faces attackpoint in direction of input
-        attackPoint = new Vector2(transform.position.x, transform.position.y) + movement * attackDistance;
         Debug.Log("attacked!");
 
         //grabs colliders of hit ditected enemies and their fins

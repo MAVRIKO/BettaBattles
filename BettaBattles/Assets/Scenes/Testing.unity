@@ -302,13 +302,13 @@ MonoBehaviour:
   dSpeed: 2
   attackRange: 0.5
   attackDistance: 0.5
+  attackPointResponciveness: 0.05
   enemies:
     serializedVersion: 2
     m_Bits: 256
   eFins:
     serializedVersion: 2
     m_Bits: 512
-  attackPoint: {x: 0, y: 0}
 --- !u!61 &1609781369
 BoxCollider2D:
   m_ObjectHideFlags: 0
