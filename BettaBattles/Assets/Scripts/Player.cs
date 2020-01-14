@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
         previouseAP = new Vector2(Mathf.Lerp(previousInput.x, movement.x, attackPointResponciveness * Time.deltaTime), Mathf.Lerp(previousInput.y, movement.y, attackPointResponciveness * Time.deltaTime));
         attackPoint = new Vector2(transform.position.x, transform.position.y) + previouseAP * attackDistance;
         previousInput = previouseAP;
+        transform.LookAt(attackPoint);
 
         Move();
     }
