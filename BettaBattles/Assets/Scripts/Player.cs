@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     Vector2 previouseAP;
     Vector2 attackPoint;
     Vector2 previousInput;
+    public float flipDirectionSpeed;
 
 
     private void Awake()
@@ -48,8 +49,11 @@ public class Player : MonoBehaviour
         // faces attackpoint in direction of input
         previouseAP = new Vector2(Mathf.Lerp(previousInput.x, movement.x, attackPointResponciveness * Time.deltaTime), Mathf.Lerp(previousInput.y, movement.y, attackPointResponciveness * Time.deltaTime));
         attackPoint = new Vector2(transform.position.x, transform.position.y) + previouseAP * attackDistance;
-        previousInput = previouseAP;
-        transform.LookAt(attackPoint);
+        if(movement.x > 0.5f || movement.x < -0.5f || movement.y > 0.5f || movement.y < -0.5f)
+        {
+        transform.LookAt(new Vector2(Mathf.Lerp(previouseAP.x, attackPoint.x, flipDirectionSpeed * Time.deltaTime), Mathf.Lerp(previouseAP.y, attackPoint.y, flipDirectionSpeed * Time.deltaTime)));
+            previousInput = previouseAP;
+        }
 
         Move();
     }
